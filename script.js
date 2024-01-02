@@ -14,31 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     showSidebar.style.display = "none";
     img.style.visibility = "visible";
   });
-  // to change currrent location
-  const link = document.getElementById("not-pickup");
-  link.addEventListener("click", () => {
-    const locator = document.getElementById("change-location");
-    locator.style.visibility = "visible";
-  });
 
-  //  to hide current location setting window
-  const hideWindow = function () {
-    const locator = document.getElementById("change-location");
-    locator.style.visibility = "hidden";
-  };
-  const downArrow = document.querySelector(".down-arrow");
-  downArrow.addEventListener("click", () => {
-    hideWindow();
-  });
 
-  
 });
 // << dom loaded
-// //  to show map
-function showMap() {
-  const iframe = document.getElementById("iframe-1");
-  iframe.style.display = "block";
-}
+
 
 // to show SMS code window
 function showCodeWindow() {
@@ -85,20 +65,23 @@ document.addEventListener("DOMContentLoaded", () => {
 //  validate forms
 //  validate start page form
 const validate = () => {
+
   document.addEventListener("DOMContentLoaded", () => {
-    const fullNameUser = document.getElementById("fullnameuser");
+    const fullNameUser = document.getElementById("nameuser");
     const numberUser = document.getElementById("phonenumberuser");
     const startSubmit = document.getElementById("start-submit");
     const validationError = document.getElementById("validation-error");
     const validationErrorPhone = document.getElementById("validation-error-phone");
-
+    startSubmit.disabled =true;
     fullNameUser.addEventListener("input", () => {
-      if (fullNameUser.value.match(/[^a-z|' ']/i)) {
+      if (fullNameUser.value.match(/[^a-z]/i)) {
         validationError.style.display = "block";
         validationError.innerHTML = "No special characters or numbers allowed";
+        startSubmit.disabled = true;
       } else {
         validationError.innerHTML = "";
         validationError.style.display = "none";
+        startSubmit.disabled = false;
       }
     });
     numberUser.addEventListener("input", () => {
@@ -107,37 +90,40 @@ const validate = () => {
       if (!inptValue.match(/(03|70|71|76|78|79|81)/)) {
         validationErrorPhone.style.display = "block";
         validationErrorPhone.innerHTML = "Invalid dial code ";
+        startSubmit.disabled = true;
       }
 
       else if (inptValue.match(/[0-9]{2}[^0-9]/)) {
         validationErrorPhone.style.display = "block";
-   validationErrorPhone.innerHTML = "No space or special characterd allowed";   
-   }
+        validationErrorPhone.innerHTML = "No space or special characterd allowed";
+        startSubmit.disabled = true;
+      }
       else if (length > 8) {
         validationErrorPhone.style.display = "block";
         validationErrorPhone.innerHTML = "Invalid phone number";
-      } 
-   
-      else if (inptValue.match(/[a-z]/i)) {
-           validationErrorPhone.style.display = "block";
-      validationErrorPhone.innerHTML = "No letters or special characterd allowed";   
+        startSubmit.disabled = true;
       }
-   
+
+      else if (inptValue.match(/[a-z]/i)) {
+        validationErrorPhone.style.display = "block";
+        validationErrorPhone.innerHTML = "No letters or special characterd allowed";
+        startSubmit.disabled = true;
+      }
 
       else {
         validationErrorPhone.innerHTML = "";
         validationErrorPhone.style.display = "none";
+        startSubmit.disabled = false;
       }
     });
-
   });
 };
-validate();
+validate()
 
 
 // active tab 
 const tabs = document.querySelectorAll('.nav-bar ul li').forEach((e) => {
-  e.addEventListener('click', ()=> {
+  e.addEventListener('click', () => {
     let current = document.querySelector('.active');
     current.classList.remove('active');
     e.classList.add('active');
