@@ -22,6 +22,7 @@ $mail = new PHPMailer(true);
         echo $confirmationToken . "<br>";
         $confirmationLink = "http://localhost/wasselni/driver/driver-confirmation.php?token=$confirmationToken";
         echo $confirmationLink . "<br>";
+        
 // if($_SERVER["REQUEST_METHOD"] === "POST") {
 
 //     $data = json_decode(file_get_contents("php://input"), true);
