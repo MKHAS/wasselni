@@ -1,6 +1,5 @@
 <?php 
 
-
 require_once("../database/connect.php");
 if($_SERVER["REQUEST_METHOD"] === "POST") {
     $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : null;
@@ -19,7 +18,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             
-            if ($stmt->rowCount() > 0) {
+            if ($stmt->rowCount() > 0) {    
                 // echo $email . " already exists ";
                 header('Content-Type: application/json');
                 echo json_encode([$email . " already exists."]);
@@ -59,9 +58,6 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
     
                 $conn->commit();
             }
-  
-
-
         }catch(PDOException $e){
             $conn->rollBack();
             echo json_encode(["error" => "error inserting data" . $e->getMessage()]);

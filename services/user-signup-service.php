@@ -18,12 +18,9 @@ session_start();
 if($_SERVER["REQUEST_METHOD"] === "POST") {
 
 if(isset($_POST['name']) && isset($_POST['phone'])) {
-    echo "from start page<br>";
     $firstname = $_POST['name'];
     $phonenumber = $_POST['phone']; 
 
-    echo $firstname . "<br>";
-    echo $phonenumber . "<br>";
 
     $_SESSION["name"] = $firstname;
     $_SESSION["phone"] = $phonenumber;
@@ -98,7 +95,7 @@ if(isset($_POST['received-verification-code'])) {
     } else {
         $_SESSION["from_server"] = true;
         header("location: ../user/code.php?error=1");
-        echo "<invalid code<br>";
+        echo "invalid code<br>";
         exit();
     }
 
@@ -116,29 +113,41 @@ if(isset($_POST['received-verification-code'])) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $storedName = isset($_SESSION["name"]) ? $_SESSION["name"] : "";
         $storedPhone = isset($_SESSION["phone"]) ? $_SESSION["phone"] : "";
-        // echo $storedName . "<br>";
-        // echo $storedPhone . "<br>";
-        // echo $password . "<br>";
-        // echo $hashedPassword . "<br>";
+        echo $storedName . "<br>";
+        echo $storedPhone . "<br>";
+        echo $password . "<br>";
+        echo $hashedPassword . "<br>";
         $doesExist = $conn->prepare("SELECT * FROM users WHERE phonenumber = :phonenumber");
         $doesExist->bindParam(":phonenumber", $storedPhone);
         $doesExist->execute();
-        // password exists?
+        // phone number exists?
         if($doesExist->rowCount() > 0) {
+            session_unset();
+            session_destroy();
             header("location: ../user/signin.php?error=2");
-            echo "phone number exists";
+
+            exit();
         } else {
-            $stmt = $conn->prepare("INSERT INTO users (name, phonenumber, password)
-            VALUES (:name, :phonenumber, :password)");
-            $stmt->bindParam(':name', $storedName);
-            $stmt->bindParam(':phonenumber', $storedPhone);
-            $stmt->bindParam(':password', $hashedPassword);
-            echo "added to db";
-            $stmt->execute();
-            $_SESSION["from_server"] = true;
-            $_SESSION["name"] = $storedName;
-            $_SESSION["phone"] = $storedPhone;
-            header("location: ../user/welcome.php");
+            try {
+                $conn->beginTransaction();
+                $stmt = $conn->prepare("INSERT INTO users (name, phonenumber, password)
+                VALUES (:name, :phonenumber, :password)");
+                $stmt->bindParam(':name', $storedName);
+                $stmt->bindParam(':phonenumber', $storedPhone);
+                $stmt->bindParam(':password', $hashedPassword);
+                echo "added to db";
+                $stmt->execute();
+                $id = $conn->lastInsertId();
+                $_SESSION["user_id"] = $id;
+                $conn->commit();
+                $_SESSION["from_server"] = true;
+                $_SESSION["name"] = $storedName;
+                $_SESSION["phone"] = $storedPhone;
+                header("location: ../user/welcome.php");
+            } catch (PDOException $e) {
+                $conn->rollBack();
+                echo "Error: " . $e->getMessage();
+            }
         }
         $conn = null;
     }
