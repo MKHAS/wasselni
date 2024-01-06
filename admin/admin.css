@@ -326,7 +326,8 @@ body.sidebar-open #overlay {
 		transform: rotate(180deg);
 	}
 }
-* {
+
+/* * {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
@@ -411,4 +412,4 @@ button {
 	background-color: aqua;
 	border: none;
 	border-radius: 5px;
-}
+} */
